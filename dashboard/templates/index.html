@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostPrint - IoT Traffic Fingerprinting</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="scanline"></div>
+
+    <header class="topbar">
+        <div class="brand">
+            <span class="logo">&#x1F47B;</span>
+            <div>
+                <h1>GhostPrint</h1>
+                <p class="subtitle">IoT Device Identification via Traffic Fingerprinting</p>
+            </div>
+        </div>
+        <div class="status-cluster">
+            <div class="status-pill" id="system-status">
+                <span class="dot"></span>
+                <span class="label">connecting...</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">UPTIME</span>
+                <span class="metric-value" id="uptime">00:00</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">DEVICES</span>
+                <span class="metric-value" id="device-count">0</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">ALERTS</span>
+                <span class="metric-value" id="alert-count">0</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="grid">
+        <!-- Device cards -->
+        <section class="panel devices-panel">
+            <header class="panel-header">
+                <h2>Identified Devices</h2>
+                <span class="hint">live classification</span>
+            </header>
+            <div id="device-list" class="device-list">
+                <div class="empty">awaiting traffic...</div>
+            </div>
+        </section>
+
+        <!-- Live traffic graph -->
+        <section class="panel graph-panel">
+            <header class="panel-header">
+                <h2>Live Traffic - Packet Rate</h2>
+                <div class="legend" id="graph-legend"></div>
+            </header>
+            <div class="chart-wrap">
+                <canvas id="traffic-chart"></canvas>
+            </div>
+        </section>
+
+        <!-- Alerts feed -->
+        <section class="panel alerts-panel">
+            <header class="panel-header">
+                <h2>Security Alerts</h2>
+                <span class="hint">rogue / spoofing</span>
+            </header>
+            <div id="alert-list" class="alert-list">
+                <div class="empty">no alerts</div>
+            </div>
+        </section>
+
+        <!-- Simulator controls -->
+        <section class="panel controls-panel">
+            <header class="panel-header">
+                <h2>Demo Controls</h2>
+                <span class="hint">simulate attack</span>
+            </header>
+            <div class="controls">
+                <div class="control-row">
+                    <div class="control-info">
+                        <strong>Rogue Device</strong>
+                        <p>Introduce an unknown device on the network.</p>
+                    </div>
+                    <button class="toggle amber" id="rogue-toggle" data-state="off">
+                        <span class="indicator"></span>
+                        <span class="text">OFF</span>
+                    </button>
+                </div>
+                <div class="control-row">
+                    <div class="control-info">
+                        <strong>Spoofing Attack</strong>
+                        <p>Force the spoofer ESP8266 to mimic a known device.</p>
+                    </div>
+                    <select id="spoofer-target" class="select">
+                        {% for key, prof in device_profiles.items() %}
+                        <option value="{{ key }}">{{ prof.label }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="toggle red" id="spoofer-toggle" data-state="off">
+                        <span class="indicator"></span>
+                        <span class="text">OFF</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- System log -->
+        <section class="panel log-panel">
+            <header class="panel-header">
+                <h2>System Log</h2>
+                <span class="hint">recent events</span>
+            </header>
+            <div id="event-log" class="event-log"></div>
+        </section>
+    </main>
+
+    <footer class="footbar">
+        <span>GhostPrint v0.1.0</span>
+        <span>RAIoT Lab - RAIoT Innovation Day 2026</span>
+        <span id="last-update">--</span>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
