@@ -10,7 +10,11 @@
  * Flash this to ESP8266 #2.
  */
 
+#if defined(ESP32)
 #include <WiFi.h>
+#else
+#include <ESP8266WiFi.h>
+#endif
 #include <WiFiUdp.h>
 #include "chhaya_config.h"
 
@@ -36,8 +40,7 @@ void connectWifi() {
     IPAddress staticIp;  staticIp.fromString(DEVICE_IP);
     IPAddress gateway;   gateway.fromString(WIFI_GATEWAY);
     WiFi.config(staticIp, gateway, IPAddress(255, 255, 255, 0));
-    Serial.printf("Using static IP %s
-", DEVICE_IP);
+        Serial.printf("Using static IP %s\n", DEVICE_IP);
 #endif
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     int attempts = 0;

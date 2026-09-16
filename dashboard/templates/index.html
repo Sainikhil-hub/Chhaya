@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chhaya - IoT Traffic Fingerprinting</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2048'%3E%3Crect%20width='48'%20height='48'%20rx='10'%20fill='%2306090f'/%3E%3Crect%20x='18'%20y='20'%20width='22'%20height='22'%20rx='5'%20fill='%2300ffc8'%20opacity='0.3'/%3E%3Crect%20x='8'%20y='8'%20width='24'%20height='24'%20rx='5'%20fill='%2300ffc8'/%3E%3Crect%20x='14'%20y='14'%20width='12'%20height='12'%20rx='2.5'%20fill='%2304140f'/%3E%3Ccircle%20cx='20'%20cy='20'%20r='2.4'%20fill='%2300ffc8'/%3E%3C/svg%3E">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
@@ -13,10 +14,47 @@
 
     <header class="topbar">
         <div class="brand">
-            <span class="logo">&#x1F47B;</span>
-            <div>
-                <h1>Chhaya</h1>
-                <p class="subtitle">IoT Device Identification via Traffic Fingerprinting</p>
+            <span class="logo" aria-hidden="true">
+                <svg width="42" height="42" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="logo-blur" x="-40%" y="-40%" width="180%" height="180%">
+                            <feGaussianBlur stdDeviation="2.2"/>
+                        </filter>
+                        <linearGradient id="logo-chip" x1="8" y1="8" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#5dffe4"/>
+                            <stop offset="1" stop-color="#00b894"/>
+                        </linearGradient>
+                    </defs>
+                    <!-- the shadow: the same device, blurred and out of reach -->
+                    <g class="logo-shadow" filter="url(#logo-blur)">
+                        <rect x="16" y="18" width="24" height="24" rx="5" fill="#00ffc8" opacity="0.3"/>
+                        <rect x="25" y="27" width="24" height="24" rx="5" fill="#00ffc8" opacity="0.12"/>
+                    </g>
+                    <!-- the device -->
+                    <g class="logo-device">
+                        <g fill="#0a7a66">
+                            <rect x="13"   y="3.5" width="2.6" height="5" rx="1.2"/>
+                            <rect x="18.7" y="3.5" width="2.6" height="5" rx="1.2"/>
+                            <rect x="24.4" y="3.5" width="2.6" height="5" rx="1.2"/>
+                            <rect x="13"   y="31.5" width="2.6" height="5" rx="1.2"/>
+                            <rect x="18.7" y="31.5" width="2.6" height="5" rx="1.2"/>
+                            <rect x="24.4" y="31.5" width="2.6" height="5" rx="1.2"/>
+                            <rect x="3.5"  y="13" width="5" height="2.6" rx="1.2"/>
+                            <rect x="3.5"  y="18.7" width="5" height="2.6" rx="1.2"/>
+                            <rect x="3.5"  y="24.4" width="5" height="2.6" rx="1.2"/>
+                            <rect x="31.5" y="13" width="5" height="2.6" rx="1.2"/>
+                            <rect x="31.5" y="18.7" width="5" height="2.6" rx="1.2"/>
+                            <rect x="31.5" y="24.4" width="5" height="2.6" rx="1.2"/>
+                        </g>
+                        <rect x="8" y="8" width="24" height="24" rx="5" fill="url(#logo-chip)"/>
+                        <rect x="14" y="14" width="12" height="12" rx="2.5" fill="#04140f" opacity="0.85"/>
+                        <circle cx="20" cy="20" r="2.4" fill="#00ffc8"/>
+                    </g>
+                </svg>
+            </span>
+            <div class="brand-text">
+                <h1>CHHAYA <span class="devanagari">छाया</span></h1>
+                <p class="subtitle">Every device leaves a shadow in its traffic &mdash; even when encrypted</p>
             </div>
         </div>
         <div class="status-cluster">

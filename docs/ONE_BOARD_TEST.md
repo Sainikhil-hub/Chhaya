@@ -36,6 +36,20 @@ New-NetFirewallRule -DisplayName "Chhaya UDP 9999" -Direction Inbound -Protocol 
 ```
 (If you skip this, the packets arrive but Windows silently drops them.)
 
+**Also check for python.exe BLOCK rules.** If the "Allow python.exe ..." firewall
+popup was ever dismissed (Cancel), Windows silently adds `python.exe` **Block**
+rules for the Private/Public profiles — and Block always wins over the port
+Allow rule above, so the ESP's packets never reach the app. Check with:
+```powershell
+netsh advfirewall firewall show rule name="python.exe"
+```
+If any Block rules exist, remove them once as Administrator:
+```powershell
+powershell -ExecutionPolicy Bypass -File docs\fix_firewall_python.ps1
+```
+(Verified failure mode: loopback test packets arrive, only packets from the
+ESP are dropped — local same-host traffic bypasses the firewall.)
+
 ## Step 2 — Flash the board (Arduino IDE)
 
 1. Connect the ESP8266 via USB.
@@ -110,3 +124,21 @@ toggle (software twin), which fires in ≤ 5 s without any re-flashing.
 
 **Demo-day fallback plan:** if the hotspot misbehaves, run the full software demo
 (`python scripts/run_demo.py`) — identical story, zero hardware, already verified.
+
+### Troubleshooting notes from a real session (2026-09-16)
+
+* **The Windows Mobile Hotspot turns itself off** whenever the laptop's
+  underlying internet connection changes network (e.g. phone hotspot ends and
+  Windows auto-connects to campus Wi-Fi). The adapter keeps the 192.168.137.1
+  address for a while, so it *looks* alive, but tethering is off and every ESP
+  packet vanishes — the Serial Monitor still prints "UDP sent" because the
+  board only knows its own driver queued the frame. Re-enable the hotspot in
+  Settings → Network → Mobile hotspot, or switch the laptop back to the phone
+  hotspot before enabling it. USB tethering from the phone is the most stable
+  option (it gives the laptop a dedicated NIC).
+* **Npcap cannot see received frames** on the Wi-Fi Direct virtual adapter
+  (only your own outgoing packets), so a Wireshark/scapy capture on that
+  adapter showing nothing does NOT prove the ESP isn't sending. Trust the
+  dashboard's `/api/state` and pings instead.
+* The ESP8266 answers pings only intermittently — its Wi-Fi radio sleeps
+  between sends. Alternating ping replies are normal, not a connectivity bug.

@@ -17,7 +17,7 @@ const PROFILE_DESCRIPTIONS = {
 const HISTORY = 60;
 const series = new Map();   // src_ip -> array of {t, v}
 const startTs = Date.now();
-const chart = null;
+let chart = null;
 const chartCtx = document.getElementById("traffic-chart").getContext("2d");
 
 const deviceList = document.getElementById("device-list");
@@ -309,7 +309,7 @@ bindToggle("spoofer-toggle", "/api/sim/spoofer", () => ({
 // Boot
 // =================================================================
 async function boot() {
-    initChart();
+    chart = initChart();
     refreshLegend();
     // Fetch initial state
     try {

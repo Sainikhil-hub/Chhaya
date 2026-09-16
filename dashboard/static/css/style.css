@@ -42,6 +42,26 @@ html, body {
     overflow-x: hidden;
 }
 
+/* Faint blueprint grid behind everything */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+        linear-gradient(rgba(79, 139, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79, 139, 255, 0.04) 1px, transparent 1px);
+    background-size: 46px 46px;
+    -webkit-mask-image: radial-gradient(ellipse at 50% 0%, rgba(0, 0, 0, 0.9) 0%, transparent 78%);
+    mask-image: radial-gradient(ellipse at 50% 0%, rgba(0, 0, 0, 0.9) 0%, transparent 78%);
+}
+
+.grid, .topbar, .footbar {
+    position: relative;
+    z-index: 1;
+}
+
 /* Subtle scanline overlay */
 .scanline {
     position: fixed;
@@ -68,6 +88,22 @@ html, body {
     backdrop-filter: blur(8px);
 }
 
+/* glowing accent line along the bottom edge of the topbar */
+.topbar::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(0, 255, 200, 0.65) 14%,
+        rgba(0, 255, 200, 0.12) 42%,
+        transparent 68%);
+    pointer-events: none;
+}
+
 .brand {
     display: flex;
     align-items: center;
@@ -75,17 +111,48 @@ html, body {
 }
 
 .logo {
-    font-size: 32px;
-    filter: drop-shadow(0 0 8px var(--accent));
+    display: block;
+    filter: drop-shadow(0 0 12px rgba(0, 255, 200, 0.35));
+}
+
+.logo svg {
+    display: block;
+}
+
+/* the shadow drifts, as if the light source breathes */
+.logo-shadow {
+    animation: shadowDrift 3.6s ease-in-out infinite;
+}
+
+@keyframes shadowDrift {
+    0%, 100% { transform: translate(0, 0); opacity: 1; }
+    50%      { transform: translate(1.6px, 2.1px); opacity: 0.82; }
 }
 
 .brand h1 {
     font-family: var(--mono);
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
     color: var(--accent);
     text-shadow: 0 0 20px rgba(0, 255, 200, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.devanagari {
+    font-family: "Nirmala UI", "Noto Sans Devanagari", var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1;
+    color: var(--text-dim);
+    text-shadow: none;
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    padding: 3px 8px;
+    background: rgba(0, 0, 0, 0.35);
 }
 
 .subtitle {
@@ -93,6 +160,7 @@ html, body {
     color: var(--text-dim);
     letter-spacing: 1px;
     text-transform: uppercase;
+    margin-top: 2px;
 }
 
 .status-cluster {
@@ -219,6 +287,21 @@ html, body {
     letter-spacing: 1.5px;
     text-transform: uppercase;
     color: var(--accent);
+    position: relative;
+    padding-left: 13px;
+}
+
+.panel-header h2::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 13px;
+    border-radius: 1px;
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
 }
 
 .hint {
