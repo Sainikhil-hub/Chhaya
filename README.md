@@ -10,8 +10,6 @@ fingerprints that shadow, classifies the device with machine learning, and
 catches devices that are **unknown** (rogue) or **pretending to be something
 else** (spoofing) — reading **metadata only, never packet contents**.
 
-> RAIoT Lab — Innovation Day 2026 submission
-> IEEE SRS-aligned (22 functional requirements across 6 system features)
 
 <p align="center">
   <em>The crisp chip is the device — the blurred echo behind it is its shadow
