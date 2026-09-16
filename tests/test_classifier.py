@@ -9,7 +9,7 @@ import numpy as np
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.classifier import GhostPrintClassifier, generate_synthetic_dataset  # noqa: E402
+from src.classifier import ChhayaClassifier, generate_synthetic_dataset  # noqa: E402
 from src.features import FeatureVector  # noqa: E402
 
 
@@ -23,14 +23,14 @@ def test_synthetic_dataset_shape():
 
 def test_classifier_achieves_target_accuracy():
     X, y = generate_synthetic_dataset(n_per_class=300)
-    clf = GhostPrintClassifier()
+    clf = ChhayaClassifier()
     summary = clf.train(X, y, verbose=False)
     assert summary["accuracy"] >= 0.85, f"Accuracy {summary['accuracy']:.3f} < 0.85"
 
 
 def test_classifier_predict_returns_label_and_confidence():
     X, y = generate_synthetic_dataset(n_per_class=200)
-    clf = GhostPrintClassifier()
+    clf = ChhayaClassifier()
     clf.train(X, y, verbose=False)
 
     # A vector in the centre of the sensor_node profile
@@ -47,7 +47,7 @@ def test_classifier_handles_low_confidence_flag():
     """A vector at the boundary of training distributions should produce
     a low-confidence prediction (below threshold)."""
     X, y = generate_synthetic_dataset(n_per_class=200)
-    clf = GhostPrintClassifier()
+    clf = ChhayaClassifier()
     clf.train(X, y, verbose=False)
 
     # Mix of two profiles - should produce non-decisive probabilities.
@@ -62,11 +62,11 @@ def test_classifier_handles_low_confidence_flag():
 
 def test_save_and_load_roundtrip(tmp_path):
     X, y = generate_synthetic_dataset(n_per_class=100)
-    clf = GhostPrintClassifier()
+    clf = ChhayaClassifier()
     clf.train(X, y, verbose=False)
 
     path = clf.save(tmp_path / "model.joblib")
-    loaded = GhostPrintClassifier.load(path)
+    loaded = ChhayaClassifier.load(path)
     fv = FeatureVector(72, 5000, 12, 0.15)
     p1 = clf.predict(fv)
     p2 = loaded.predict(fv)

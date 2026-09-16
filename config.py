@@ -1,4 +1,4 @@
-"""GhostPrint central configuration.
+"""Chhaya central configuration.
 
 All tunable parameters live here so the pipeline, dashboard, and scripts
 share a single source of truth (REQ: maintainability / configurable
@@ -19,7 +19,7 @@ MODEL_DIR = DATA_DIR / "models"
 LOG_DIR = DATA_DIR / "logs"
 
 TRAINING_DATA_PATH = TRAINING_DIR / "training_data.csv"
-MODEL_PATH = MODEL_DIR / "ghostprint_rf.joblib"
+MODEL_PATH = MODEL_DIR / "chhaya_rf.joblib"
 ALERT_LOG_PATH = LOG_DIR / "alerts.json"
 PREDICTION_LOG_PATH = LOG_DIR / "predictions.json"
 
@@ -169,11 +169,11 @@ SIMULATOR_SOURCE_IPS = {
 # ---------------------------------------------------------------------------
 # Live capture (used when ESP8266 boards are attached)
 # ---------------------------------------------------------------------------
-CAPTURE_INTERFACE = os.environ.get("GHOSTPRINT_IFACE", None)  # auto if None
-CAPTURE_BPF = "udp dst port 9999"   # only packets sent by the boards to GhostPrint
+CAPTURE_INTERFACE = os.environ.get("CHHAYA_IFACE", None)  # auto if None
+CAPTURE_BPF = "udp dst port 9999"   # only packets sent by the boards to Chhaya
 CAPTURE_PACKET_TIMEOUT = 1.0    # seconds (scapy sniff timeout)
 # Port the UDP capture source ("--mode udp") binds on the capture laptop.
-# The ESP8266 firmware sends to this port (TARGET_PORT in ghostprint_config.h).
+# The ESP8266 firmware sends to this port (TARGET_PORT in chhaya_config.h).
 CAPTURE_LISTEN_PORT = 9999
 
 # ---------------------------------------------------------------------------
@@ -181,9 +181,9 @@ CAPTURE_LISTEN_PORT = 9999
 # ---------------------------------------------------------------------------
 DASHBOARD_HOST = "0.0.0.0"
 DASHBOARD_PORT = 5000
-SECRET_KEY = os.environ.get("GHOSTPRINT_SECRET", "ghostprint-demo-not-for-prod")
+SECRET_KEY = os.environ.get("CHHAYA_SECRET", "chhaya-demo-not-for-prod")
 
 # ---------------------------------------------------------------------------
 # Logging
 # ---------------------------------------------------------------------------
-LOG_LEVEL = os.environ.get("GHOSTPRINT_LOG", "INFO")
+LOG_LEVEL = os.environ.get("CHHAYA_LOG", "INFO")

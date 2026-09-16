@@ -1,8 +1,8 @@
-# GhostPrint
+# Chhaya
 
 **IoT device identification via network traffic fingerprinting.**
 
-GhostPrint identifies smart devices on a local network purely from how they
+Chhaya identifies smart devices on a local network purely from how they
 communicate, not what they say. It learns the behavioural fingerprint of each
 device (packet size, inter-packet interval, packet rate, burstiness), then uses
 machine learning to identify the device in real time, alert on unknown /
@@ -37,7 +37,7 @@ single laptop.
 
 ```bash
 # 1. Clone / extract the project
-cd GhostPrint
+cd Chhaya
 
 # 2. Install dependencies
 pip install -r requirements.txt
@@ -61,7 +61,7 @@ with live confidence scores. Use the demo controls on the dashboard to:
 
 When you have the hardware:
 
-1. Edit `firmware/ghostprint_config.h` and set your Wi-Fi SSID/password and
+1. Edit `firmware/chhaya_config.h` and set your Wi-Fi SSID/password and
    the capture laptop's IP.
 2. Open each `.ino` sketch in Arduino IDE, select your ESP8266 board, and
    upload:
@@ -85,12 +85,12 @@ no extra packages needed.
 ## Project layout
 
 ```
-GhostPrint/
+Chhaya/
 ├── README.md
 ├── requirements.txt
 ├── config.py                     # all tunable parameters
 ├── firmware/                     # ESP8266 Arduino sketches
-│   ├── ghostprint_config.h
+│   ├── chhaya_config.h
 │   ├── 01_sensor_node/
 │   ├── 02_camera_stream/
 │   ├── 03_smart_switch/
@@ -114,7 +114,7 @@ GhostPrint/
 │   └── smoke_test.py             # end-to-end verification
 ├── data/
 │   ├── training/                 # training_data.csv
-│   ├── models/                   # ghostprint_rf.joblib
+│   ├── models/                   # chhaya_rf.joblib
 │   └── logs/                     # alerts.json, predictions.json
 └── tests/                        # pytest suite (21 tests)
 ```

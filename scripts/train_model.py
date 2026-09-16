@@ -16,7 +16,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 import config  # noqa: E402
-from src.classifier import GhostPrintClassifier  # noqa: E402
+from src.classifier import ChhayaClassifier  # noqa: E402
 from src.features import FEATURE_NAMES  # noqa: E402
 from src.utils import configure_logging, get_logger  # noqa: E402
 
@@ -24,7 +24,7 @@ log = get_logger(__name__)
 
 
 def main() -> None:
-    p = argparse.ArgumentParser(description="Train GhostPrint Random Forest classifier")
+    p = argparse.ArgumentParser(description="Train Chhaya Random Forest classifier")
     p.add_argument("--data", type=str, default=str(config.TRAINING_DATA_PATH),
                    help="Path to training CSV (must contain a 'label' column)")
     p.add_argument("--out", type=str, default=str(config.MODEL_PATH),
@@ -57,7 +57,7 @@ def main() -> None:
     X = df[list(FEATURE_NAMES)].values
 
     log.info("Loaded %d samples with %d features", len(X), X.shape[1])
-    clf = GhostPrintClassifier()
+    clf = ChhayaClassifier()
     summary = clf.train(X, y)
     log.info("Test accuracy: %.3f", summary["accuracy"])
     log.info("Per-class report:\n%s", summary["report"])

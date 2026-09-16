@@ -7,14 +7,14 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.capture import make_source
-from src.classifier import GhostPrintClassifier
+from src.classifier import ChhayaClassifier
 from src.pipeline import Pipeline
 from src.traffic_simulator import SimulatorOrchestrator
 from dashboard.app import create_app
 
 
 def main() -> None:
-    clf = GhostPrintClassifier.load()
+    clf = ChhayaClassifier.load()
     src = make_source("inprocess")
     pipe = Pipeline(classifier=clf, source=src)
     sim = SimulatorOrchestrator(on_packet=src.feed)
@@ -26,7 +26,7 @@ def main() -> None:
         with app.test_client() as c:
             r = c.get("/")
             assert r.status_code == 200
-            assert b"GhostPrint" in r.data
+            assert b"Chhaya" in r.data
             print(f"GET /: {r.status_code} ({len(r.data)} bytes)")
 
             r = c.get("/api/health")

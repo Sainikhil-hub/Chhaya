@@ -1,4 +1,4 @@
-"""End-to-end smoke test for GhostPrint.
+"""End-to-end smoke test for Chhaya.
 
 Run this before the showcase to confirm the full demo flow works:
 
@@ -20,7 +20,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 import config  # noqa: E402
 from src.capture import make_source  # noqa: E402
-from src.classifier import GhostPrintClassifier  # noqa: E402
+from src.classifier import ChhayaClassifier  # noqa: E402
 from src.pipeline import Pipeline  # noqa: E402
 from src.traffic_simulator import SimulatorOrchestrator  # noqa: E402
 
@@ -33,7 +33,7 @@ EXPECTED_LABELS = {
 
 
 def main() -> int:
-    clf = GhostPrintClassifier.load()
+    clf = ChhayaClassifier.load()
     src = make_source("inprocess")
     pipe = Pipeline(classifier=clf, source=src)
     sim = SimulatorOrchestrator(on_packet=src.feed)

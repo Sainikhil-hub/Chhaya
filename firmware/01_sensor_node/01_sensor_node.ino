@@ -1,12 +1,12 @@
 /*
- * GhostPrint - SensorNode firmware
+ * Chhaya - SensorNode firmware
  *
  * Simulates an environmental sensor node:
  *   - Sends a small UDP packet every ~5 seconds (with small jitter)
  *   - Packet size ~72 bytes (occupancy / temperature simulation)
  *
- * Flash this to ESP8266 #1. Configure Wi-Fi in ghostprint_config.h.
- * The packet contents are dummy; only metadata is used by GhostPrint.
+ * Flash this to ESP8266 #1. Configure Wi-Fi in chhaya_config.h.
+ * The packet contents are dummy; only metadata is used by Chhaya.
  */
 
 #if defined(ESP32)
@@ -15,7 +15,7 @@
 #include <ESP8266WiFi.h>
 #endif
 #include <WiFiUdp.h>
-#include "ghostprint_config.h"
+#include "chhaya_config.h"
 
 #define DEVICE_LABEL "sensor_node"
 #define AVG_PACKET_SIZE  72
@@ -64,6 +64,8 @@ void setup() {
     if (WiFi.status() == WL_CONNECTED) {
         Serial.printf("\n[%s] Connected, IP=%s\n", DEVICE_LABEL,
                       WiFi.localIP().toString().c_str());
+        Serial.printf("[%s] Will send UDP to %s:%d\n", DEVICE_LABEL,
+                      TARGET_IP, TARGET_PORT);
     } else {
         Serial.printf("\n[%s] Wi-Fi failed - will keep retrying.\n", DEVICE_LABEL);
     }
@@ -86,11 +88,15 @@ void loop() {
         uint8_t buf[256];
         memset(buf, 0xA5, sizeof(buf));
         // Only send the bytes we want to claim - payload is ignored by
-        // GhostPrint but the on-wire size becomes the "packet size"
+        // Chhaya but the on-wire size becomes the "packet size"
         // feature.
         udp.beginPacket(TARGET_IP, TARGET_PORT);
         udp.write(buf, sz);
-        udp.endPacket();
+        int ok = udp.endPacket();
+        // Demo heartbeat: one line per real send, so the Serial Monitor
+        // shows the board is actually transmitting (and to where).
+        Serial.printf("[%s] UDP %s %dB -> %s:%d\n", DEVICE_LABEL,
+                      ok ? "sent" : "SEND-FAILED", sz, TARGET_IP, TARGET_PORT);
     }
     delay(10);
 }

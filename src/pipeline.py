@@ -16,7 +16,7 @@ from typing import Any, Callable
 
 import config
 from src.capture import CapturedPacket, InProcessSource, LiveCaptureSource
-from src.classifier import GhostPrintClassifier, Prediction
+from src.classifier import ChhayaClassifier, Prediction
 from src.detector import Alert, AnomalyDetector
 from src.features import FeatureVector, safe_extract
 from src.utils import JsonListStore, get_logger, now_ts
@@ -67,7 +67,7 @@ class PipelineSnapshot:
 # Pipeline
 # ---------------------------------------------------------------------------
 class Pipeline:
-    def __init__(self, classifier: GhostPrintClassifier,
+    def __init__(self, classifier: ChhayaClassifier,
                  source: InProcessSource | LiveCaptureSource | None = None,
                  alert_log: JsonListStore | None = None,
                  prediction_log: JsonListStore | None = None,
@@ -75,7 +75,7 @@ class Pipeline:
         """
         Parameters
         ----------
-        classifier : GhostPrintClassifier
+        classifier : ChhayaClassifier
             A trained (or pre-loaded) classifier.
         source : capture source or None
             Defaults to InProcessSource.
@@ -107,7 +107,7 @@ class Pipeline:
         self.source.add_handler(self._on_packet)
         self.source.start()
         self._worker = threading.Thread(target=self._run_loop, daemon=True,
-                                        name="ghostprint-pipeline")
+                                        name="chhaya-pipeline")
         self._worker.start()
         self._system_status = "capturing"
         log.info("Pipeline started")

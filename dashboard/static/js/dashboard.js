@@ -1,4 +1,4 @@
-/* GhostPrint dashboard - live client logic */
+/* Chhaya dashboard - live client logic */
 
 const DEVICE_LABELS = {
     sensor_node:   { label: "SensorNode",   icon: "S", color: "#00ffc8" },
@@ -240,7 +240,7 @@ const socket = io();
 socket.on("connect", () => {
     sysStatus.classList.add("capturing");
     sysStatus.querySelector(".label").textContent = "live";
-    logEvent("info", "system", "Connected to GhostPrint");
+    logEvent("info", "system", "Connected to Chhaya");
 });
 
 socket.on("disconnect", () => {

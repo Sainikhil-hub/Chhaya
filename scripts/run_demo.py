@@ -1,4 +1,4 @@
-"""Run the full GhostPrint demo:
+"""Run the full Chhaya demo:
 
 * starts the software IoT simulator (3 known devices + spoofer)
 * starts the capture + ML pipeline
@@ -23,7 +23,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 import config  # noqa: E402
 from src.capture import InProcessSource, make_source  # noqa: E402
-from src.classifier import GhostPrintClassifier  # noqa: E402
+from src.classifier import ChhayaClassifier  # noqa: E402
 from src.pipeline import Pipeline  # noqa: E402
 from src.traffic_simulator import SimulatorOrchestrator  # noqa: E402
 from src.utils import configure_logging, get_logger  # noqa: E402
@@ -31,11 +31,11 @@ from src.utils import configure_logging, get_logger  # noqa: E402
 log = get_logger(__name__)
 
 
-def ensure_model() -> GhostPrintClassifier:
+def ensure_model() -> ChhayaClassifier:
     """Load the trained model, or train a fresh one if none exists."""
     if config.MODEL_PATH.exists():
         try:
-            return GhostPrintClassifier.load()
+            return ChhayaClassifier.load()
         except Exception as e:
             log.warning("Failed to load model (%s); retraining.", e)
     log.info("No trained model found - training a fresh one...")
@@ -43,7 +43,7 @@ def ensure_model() -> GhostPrintClassifier:
     import pandas as pd
     from src.features import FEATURE_NAMES
     X, y = generate_synthetic_dataset(n_per_class=300)
-    clf = GhostPrintClassifier()
+    clf = ChhayaClassifier()
     clf.train(X, y)
     clf.save()
     # Also save the CSV for the record
@@ -54,7 +54,7 @@ def ensure_model() -> GhostPrintClassifier:
 
 
 def main() -> None:
-    p = argparse.ArgumentParser(description="Run the GhostPrint demo.")
+    p = argparse.ArgumentParser(description="Run the Chhaya demo.")
     p.add_argument("--mode", choices=["inprocess", "live", "udp"], default="inprocess",
                    help="Capture mode (inprocess = simulator-friendly; udp = real "
                         "ESP8266 boards sending to this laptop, no Npcap needed; "
@@ -99,7 +99,7 @@ def main() -> None:
     from dashboard.app import create_app
     app, socketio = create_app(pipeline=pipeline, simulator=simulator)
     log.info("=" * 70)
-    log.info(" GhostPrint dashboard ready - open http://%s:%d",
+    log.info(" Chhaya dashboard ready - open http://%s:%d",
              args.host, args.port)
     log.info("=" * 70)
 

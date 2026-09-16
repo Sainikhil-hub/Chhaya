@@ -1,5 +1,5 @@
 /*
- * GhostPrint - Spoofer firmware
+ * Chhaya - Spoofer firmware
  *
  * A 4th ESP8266 that mimics one of the three known devices on command.
  * The packet size and interval are roughly matched to the target
@@ -23,7 +23,7 @@
 #include <ESP8266WiFi.h>
 #endif
 #include <WiFiUdp.h>
-#include "ghostprint_config.h"
+#include "chhaya_config.h"
 
 #define DEVICE_LABEL "spoofer"
 #define TRIGGER_GPIO 0

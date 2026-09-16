@@ -1,5 +1,5 @@
 /*
- * GhostPrint - SmartSwitch firmware
+ * Chhaya - SmartSwitch firmware
  *
  * Simulates a smart switch that is mostly idle and only sends a tiny
  * packet when triggered. The "trigger" is simulated here as a random
@@ -14,7 +14,7 @@
 
 #include <WiFi.h>
 #include <WiFiUdp.h>
-#include "ghostprint_config.h"
+#include "chhaya_config.h"
 
 #define DEVICE_LABEL "smart_switch"
 #define AVG_PACKET_SIZE  32

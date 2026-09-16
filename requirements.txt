@@ -1,4 +1,4 @@
-GhostPrint - IoT Device Identification via Traffic Fingerprinting
+Chhaya - IoT Device Identification via Traffic Fingerprinting
 ==================================================================
 
 Core dependencies

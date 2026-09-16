@@ -39,7 +39,7 @@ class Prediction:
         }
 
 
-class GhostPrintClassifier:
+class ChhayaClassifier:
     """Wraps a trained Random Forest and provides a clean predict API."""
 
     def __init__(self, model: RandomForestClassifier | None = None):
@@ -112,7 +112,7 @@ class GhostPrintClassifier:
         return path
 
     @classmethod
-    def load(cls, path: Path | None = None) -> "GhostPrintClassifier":
+    def load(cls, path: Path | None = None) -> "ChhayaClassifier":
         path = Path(path or config.MODEL_PATH)
         if not path.exists():
             raise FileNotFoundError(

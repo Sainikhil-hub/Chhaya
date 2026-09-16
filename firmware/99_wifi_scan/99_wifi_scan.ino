@@ -1,5 +1,5 @@
 /*
- * GhostPrint debug tool - Wi-Fi scanner
+ * Chhaya debug tool - Wi-Fi scanner
  * Lists every network the ESP8266 can see, with channel and signal.
  * Flash this, open Serial Monitor at 115200, and read the list.
  * Tells us if the board can see your hotspot at all.

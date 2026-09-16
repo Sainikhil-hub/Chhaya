@@ -1,4 +1,4 @@
-"""Flask + SocketIO dashboard for GhostPrint.
+"""Flask + SocketIO dashboard for Chhaya.
 
 Exposes:
 * GET  /                       -> main dashboard

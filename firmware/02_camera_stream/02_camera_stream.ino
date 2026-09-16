@@ -1,5 +1,5 @@
 /*
- * GhostPrint - CameraStream firmware
+ * Chhaya - CameraStream firmware
  *
  * Simulates a security camera that streams a large burst of data
  * every ~30 seconds. Each burst contains 8-14 large UDP packets
@@ -12,7 +12,7 @@
 
 #include <WiFi.h>
 #include <WiFiUdp.h>
-#include "ghostprint_config.h"
+#include "chhaya_config.h"
 
 #define DEVICE_LABEL "camera_stream"
 #define AVG_PACKET_SIZE  1200

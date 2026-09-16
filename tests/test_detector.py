@@ -10,14 +10,14 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 import config  # noqa: E402
-from src.classifier import GhostPrintClassifier, generate_synthetic_dataset  # noqa: E402
+from src.classifier import ChhayaClassifier, generate_synthetic_dataset  # noqa: E402
 from src.detector import AnomalyDetector  # noqa: E402
 from src.features import FeatureVector  # noqa: E402
 
 
 def _make_classifier():
     X, y = generate_synthetic_dataset(n_per_class=200)
-    clf = GhostPrintClassifier()
+    clf = ChhayaClassifier()
     clf.train(X, y, verbose=False)
     return clf
 

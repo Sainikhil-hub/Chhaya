@@ -25,7 +25,7 @@ log = get_logger(__name__)
 
 
 def main() -> None:
-    p = argparse.ArgumentParser(description="Generate synthetic GhostPrint training data")
+    p = argparse.ArgumentParser(description="Generate synthetic Chhaya training data")
     p.add_argument("--per-class", type=int, default=300,
                    help="Number of synthetic samples per device class")
     p.add_argument("--out", type=str, default=str(config.TRAINING_DATA_PATH),

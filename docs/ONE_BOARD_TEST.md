@@ -1,7 +1,7 @@
 # One-ESP8266 Hardware Test Guide
 
 You need: **1 × ESP8266, 1 × USB cable, your laptop, your phone hotspot** ("realme 6 Pro").
-The ESP8266 sends real UDP packets over Wi-Fi; GhostPrint receives and identifies it —
+The ESP8266 sends real UDP packets over Wi-Fi; Chhaya receives and identifies it —
 no Npcap, no admin rights, no extra hardware.
 
 > Why the phone hotspot: campus Wi-Fi (Amity-wifi) blocks device-to-device traffic
@@ -19,7 +19,7 @@ no Npcap, no admin rights, no extra hardware.
    ipconfig
    ```
    Under "Wireless LAN adapter Wi-Fi" note the **IPv4 Address** (e.g. `10.148.242.229`).
-4. Open `firmware/ghostprint_config.h` and check the three values:
+4. Open `firmware/chhaya_config.h` and check the three values:
    ```c
    #define WIFI_SSID     "realme 6 Pro"
    #define WIFI_PASSWORD "7674029485"
@@ -32,7 +32,7 @@ no Npcap, no admin rights, no extra hardware.
 
 PowerShell **as Administrator**:
 ```powershell
-New-NetFirewallRule -DisplayName "GhostPrint UDP 9999" -Direction Inbound -Protocol UDP -LocalPort 9999 -Action Allow
+New-NetFirewallRule -DisplayName "Chhaya UDP 9999" -Direction Inbound -Protocol UDP -LocalPort 9999 -Action Allow
 ```
 (If you skip this, the packets arrive but Windows silently drops them.)
 
@@ -55,10 +55,10 @@ New-NetFirewallRule -DisplayName "GhostPrint UDP 9999" -Direction Inbound -Proto
 > so the same code runs on both. In the spoofer, the runtime target-cycle button on GPIO0
 > is the **FLASH** button on a NodeMCU board.
 
-## Step 3 — Run GhostPrint in hardware mode
+## Step 3 — Run Chhaya in hardware mode
 
 ```bash
-cd D:\innovation\GhostPrint
+cd D:\innovation\Chhaya
 python scripts/run_demo.py --mode udp
 ```
 Open **http://localhost:5000**. Within ~10–15 seconds a new device card appears
@@ -73,14 +73,14 @@ check `TARGET_IP` matches `ipconfig`, and check the firewall rule (Step 1).
 
 The re-flashed board impersonates the device it just was:
 
-1. In `firmware/ghostprint_config.h` set (use the IP you noted in Step 2):
+1. In `firmware/chhaya_config.h` set (use the IP you noted in Step 2):
    ```c
    #define USE_STATIC_IP 1
    #define DEVICE_IP     "10.148.242.xxx"   // the IP the board had as SensorNode
    #define WIFI_GATEWAY  "10.148.242.1"     // usually the laptop IP ending .1 — check `ipconfig` "Default Gateway"
    ```
 2. Open and upload `firmware/04_spoofer/04_spoofer.ino` to the same board.
-3. Keep GhostPrint running. The board now transmits **as the SensorNode's IP**
+3. Keep Chhaya running. The board now transmits **as the SensorNode's IP**
    with subtly wrong timing (10% bigger packets, 15% faster rhythm).
 4. Within **~10–15 s** the dashboard fires a **red critical alert**:
    `Possible spoofing: '10.148.242.xxx' is impersonating 'sensor_node' ...`
@@ -101,7 +101,7 @@ toggle (software twin), which fires in ≤ 5 s without any re-flashing.
 
 | What | Where |
 |------|-------|
-| Wi-Fi / laptop IP config | `firmware/ghostprint_config.h` (edit `TARGET_IP` after `ipconfig`) |
+| Wi-Fi / laptop IP config | `firmware/chhaya_config.h` (edit `TARGET_IP` after `ipconfig`) |
 | Sensor firmware (start here) | `firmware/01_sensor_node/01_sensor_node.ino` |
 | Spoofer firmware | `firmware/04_spoofer/04_spoofer.ino` |
 | Run hardware mode | `python scripts/run_demo.py --mode udp` |

@@ -183,7 +183,7 @@ class UdpSource:
         self._sock.settimeout(0.5)
         self._stop.clear()
         threading.Thread(target=self._loop, daemon=True,
-                         name="ghostprint-udp-source").start()
+                         name="chhaya-udp-source").start()
         log.info("UdpSource listening on %s:%d", self.host, self.port)
 
     def _loop(self) -> None:
