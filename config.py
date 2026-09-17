@@ -57,6 +57,10 @@ SPOOFING_BASELINE_MIN_SAMPLES = 6     # distinct windows before judging
 SPOOFING_ZSCORE_THRESHOLD = 4.0       # |z| above this on any feature => suspect
 SPOOFING_MIN_EXCEED_WINDOWS = 2      # consecutive suspect windows => spoofing
 SPOOFING_LOOKBACK_WINDOWS = 20       # how many recent windows to keep per device
+# A device silent longer than this is treated as gone: its spoofing baseline
+# expires so a recycled IP (DHCP reuse, re-flash) is relearned instead of
+# being judged against a previous occupant's statistics.
+SPOOFING_BASELINE_MAX_GAP_SECONDS = 300
 # Rogue detection uses a scale-aware (z-normalised) distance from the class
 # prototypes below: legitimate windows score <= ~10, unknown/rogue traffic
 # scores > ~100 on every profile.

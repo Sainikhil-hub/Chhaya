@@ -27,4 +27,18 @@
 #define TARGET_PORT 9999
 #endif
 
+// ---- Fixed device identity (ONE-BOARD spoofing demo) ----
+// 1 = the board pins its IP, so a re-flash keeps the victim's identity.
+// DEVICE_IP must equal the IP the sensor board currently holds, and
+// WIFI_GATEWAY is the Windows hotspot router (192.168.137.1).
+#ifndef USE_STATIC_IP
+#define USE_STATIC_IP 1
+#endif
+#ifndef DEVICE_IP
+#define DEVICE_IP "192.168.137.100"
+#endif
+#ifndef WIFI_GATEWAY
+#define WIFI_GATEWAY "192.168.137.1"
+#endif
+
 // Device label is overridden by each sketch.

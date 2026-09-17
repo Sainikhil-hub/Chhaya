@@ -258,6 +258,7 @@ socket.on("snapshot", (data) => {
 
 socket.on("prediction", (p) => {
     lastUpdateEl.textContent = "Updated " + new Date().toLocaleTimeString("en-GB");
+    scheduleRefresh();
 });
 
 socket.on("status", (p) => {
@@ -266,6 +267,7 @@ socket.on("status", (p) => {
 
 socket.on("alert", (a) => {
     logEvent(a.type === "spoofing" ? "critical" : "warning", a.type, a.message);
+    scheduleRefresh();
 });
 
 socket.on("alert_reviewed", () => {
@@ -308,36 +310,64 @@ bindToggle("spoofer-toggle", "/api/sim/spoofer", () => ({
 // =================================================================
 // Boot
 // =================================================================
+let lastDevicesJson = "";
+let lastAlertsJson = "";
+
+// Re-render device cards + alerts from /api/state and feed the chart.
+// Called by the 3-second poll and immediately on prediction/alert events,
+// so a newly connected device appears without a page reload.
+async function refreshState() {
+    try {
+        const r = await fetch("/api/state");
+        const data = await r.json();
+        const dj = JSON.stringify(data.devices);
+        if (dj !== lastDevicesJson) {
+            lastDevicesJson = dj;
+            renderDevices(data.devices);
+        }
+        const aj = JSON.stringify(data.recent_alerts);
+        if (aj !== lastAlertsJson) {
+            lastAlertsJson = aj;
+            renderAlerts(data.recent_alerts);
+        }
+        const ppm = {};
+        for (const [ip, d] of Object.entries(data.devices)) {
+            if (d.features) {
+                // Normalize ip to label key for the chart series
+                const label = d.prediction && d.prediction.label;
+                if (label && DEVICE_LABELS[label]) {
+                    ppm[label] = d.features.packets_per_minute;
+                }
+            }
+        }
+        pushChartPoint(Date.now() / 1000, ppm);
+    } catch (e) { /* ignore */ }
+}
+
+// Throttled: at most one refresh per second even if events fire rapidly.
+let lastRefresh = 0;
+let refreshTimer = null;
+function scheduleRefresh() {
+    const now = Date.now();
+    if (now - lastRefresh >= 1000) {
+        lastRefresh = now;
+        refreshState();
+    } else if (!refreshTimer) {
+        refreshTimer = setTimeout(() => {
+            refreshTimer = null;
+            lastRefresh = Date.now();
+            refreshState();
+        }, 600);
+    }
+}
+
 async function boot() {
     chart = initChart();
     refreshLegend();
     // Fetch initial state
-    try {
-        const r = await fetch("/api/state");
-        const data = await r.json();
-        renderDevices(data.devices);
-        renderAlerts(data.recent_alerts);
-    } catch (e) {
-        logEvent("warning", "system", "Could not fetch initial state");
-    }
-    // Periodically refresh the chart with the latest features per device
-    setInterval(async () => {
-        try {
-            const r = await fetch("/api/state");
-            const data = await r.json();
-            const ppm = {};
-            for (const [ip, d] of Object.entries(data.devices)) {
-                if (d.features) {
-                    // Normalize ip to label key for the chart series
-                    const label = d.prediction && d.prediction.label;
-                    if (label && DEVICE_LABELS[label]) {
-                        ppm[label] = d.features.packets_per_minute;
-                    }
-                }
-            }
-            pushChartPoint(Date.now() / 1000, ppm);
-        } catch (e) { /* ignore */ }
-    }, 3000);
+    await refreshState();
+    // Poll continuously (devices + alerts + chart stay live)
+    setInterval(refreshState, 3000);
 
     // Uptime counter
     setInterval(() => {

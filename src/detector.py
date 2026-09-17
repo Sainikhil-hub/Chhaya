@@ -72,6 +72,10 @@ class AnomalyDetector:
         # Per source IP: how many consecutive windows exceeded the spoofing
         # z-score threshold (a single spike is not enough evidence).
         self._exceed_streak: dict[str, int] = defaultdict(int)
+        # Per source IP: last time a window was processed (used to expire
+        # stale baselines when a device returns after a long absence -
+        # e.g. DHCP recycled the IP to a different physical device).
+        self._last_seen: dict[str, float] = {}
         # Per source IP: when it was last flagged rogue by the distance
         # rule (spoofing is suppressed for genuinely unknown devices).
         self._rogue_flagged: dict[str, float] = {}
@@ -153,6 +157,20 @@ class AnomalyDetector:
         # confirmation. Skip windows identical to the previous one.
         if hist and list(hist[-1]) == vec:
             return None
+
+        # Stale-baseline expiry: if this IP was silent far longer than a
+        # normal traffic gap, whatever baseline it had describes a
+        # *previous* occupant of the address (re-flash, DHCP recycle).
+        # Relearn from scratch instead of judging against dead statistics.
+        now_ts = time.time()
+        gap = now_ts - self._last_seen.get(source_ip, now_ts)
+        self._last_seen[source_ip] = now_ts
+        if gap > config.SPOOFING_BASELINE_MAX_GAP_SECONDS and (hist or source_ip in self._baseline):
+            self._history.pop(source_ip, None)
+            self._baseline.pop(source_ip, None)
+            self._exceed_streak.pop(source_ip, None)
+            self._rogue_flagged.pop(source_ip, None)
+            hist = self._history[source_ip]
 
         # Spoofing analysis assumes an established, known device. If this
         # source was recently judged far from every known profile, it is an
@@ -245,7 +263,13 @@ def _mean_std_per_feature(rows: list[list[float]]) -> dict[str, tuple[float, flo
     for i in range(len(FEATURE_NAMES)):
         m = means[i]
         var = sum((r[i] - m) ** 2 for r in rows) / n
-        stds.append(var ** 0.5)
+        std = var ** 0.5
+        # Floor the std at 1% of the mean: a device sending at an almost
+        # perfectly fixed period (e.g. a timer-driven app) otherwise
+        # produces a near-zero std, and any later real-world jitter on
+        # that feature explodes the z-score into the thousands.
+        std = max(std, 0.01 * abs(m))
+        stds.append(std)
     return {f: (means[i], stds[i]) for i, f in enumerate(FEATURE_NAMES)}
 
 
