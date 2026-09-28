@@ -22,7 +22,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 import config  # noqa: E402
-from src.capture import InProcessSource, make_source  # noqa: E402
+from src.capture import CombinedSource, InProcessSource, make_source  # noqa: E402
 from src.classifier import ChhayaClassifier  # noqa: E402
 from src.pipeline import Pipeline  # noqa: E402
 from src.traffic_simulator import SimulatorOrchestrator  # noqa: E402
@@ -59,6 +59,9 @@ def main() -> None:
                    help="Capture mode (inprocess = simulator-friendly; udp = real "
                         "ESP8266 boards sending to this laptop, no Npcap needed; "
                         "live = scapy sniffing)")
+    p.add_argument("--phone", action="store_true",
+                   help="In software mode, also listen for UDP packets from a phone "
+                        "or other real device on port 9999")
     p.add_argument("--host", default=config.DASHBOARD_HOST)
     p.add_argument("--port", type=int, default=config.DASHBOARD_PORT)
     p.add_argument("--no-simulator", action="store_true",
@@ -77,7 +80,8 @@ def main() -> None:
     classifier = ensure_model()
 
     # 2. Capture source
-    source = make_source(mode=args.mode, interface=args.interface)
+    source_mode = "combined" if args.phone and args.mode == "inprocess" else args.mode
+    source = make_source(mode=source_mode, interface=args.interface)
 
     # 3. Pipeline
     pipeline = Pipeline(classifier=classifier, source=source)
@@ -85,7 +89,7 @@ def main() -> None:
     # 4. Simulator (if in-process)
     simulator: SimulatorOrchestrator | None = None
     if args.mode == "inprocess" and not args.no_simulator:
-        if not isinstance(source, InProcessSource):
+        if not isinstance(source, (InProcessSource, CombinedSource)):
             log.warning("Source is not InProcessSource; simulator disabled.")
         else:
             simulator = SimulatorOrchestrator(on_packet=source.feed)

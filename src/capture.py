@@ -5,6 +5,9 @@ Two capture sources are supported:
 * ``InProcessSource`` – the simulator feeds packets directly into the
   pipeline via callbacks. This is the default for the laptop demo and
   requires no admin / Npcap / Wireshark.
+* ``UdpSource`` – receives UDP datagrams sent directly to the laptop.
+* ``CombinedSource`` – accepts both in-process simulator traffic and UDP
+  datagrams, so a phone can join the software demo.
 * ``LiveCaptureSource`` – uses scapy to sniff real UDP/TCP packets on a
   chosen interface. This is used when ESP8266 boards are physically
   attached to the network.
@@ -220,6 +223,37 @@ class UdpSource:
         log.info("UdpSource stopped")
 
 
+class CombinedSource:
+    """Combine the software simulator source with a UDP listener.
+
+    ``feed`` deliberately mirrors :class:`InProcessSource`, allowing the
+    existing simulator to be used unchanged while real phones or boards send
+    UDP packets to ``CAPTURE_LISTEN_PORT``.
+    """
+
+    def __init__(self):
+        self._inprocess = InProcessSource()
+        self._udp = UdpSource()
+
+    def add_handler(self, handler: Callable[[CapturedPacket], None]) -> None:
+        self._inprocess.add_handler(handler)
+        self._udp.add_handler(handler)
+
+    def feed(self, pkt) -> None:
+        """Accept a simulated packet through the in-process half."""
+        self._inprocess.feed(pkt)
+
+    def start(self) -> None:
+        self._inprocess.start()
+        self._udp.start()
+        log.info("CombinedSource started (simulator + UDP listener)")
+
+    def stop(self) -> None:
+        self._udp.stop()
+        self._inprocess.stop()
+        log.info("CombinedSource stopped")
+
+
 # ---------------------------------------------------------------------------
 # Factory
 # ---------------------------------------------------------------------------
@@ -228,7 +262,7 @@ def make_source(mode: str = "inprocess", interface: str | None = None):
 
     Parameters
     ----------
-    mode : "inprocess" | "live" | "udp"
+    mode : "inprocess" | "combined" | "live" | "udp"
     interface : str, optional
         Used only when mode == "live".
     """
@@ -236,4 +270,6 @@ def make_source(mode: str = "inprocess", interface: str | None = None):
         return LiveCaptureSource(interface=interface)
     if mode == "udp":
         return UdpSource()
+    if mode == "combined":
+        return CombinedSource()
     return InProcessSource()

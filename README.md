@@ -58,6 +58,22 @@ Controls** panel:
   *"Possible spoofing: '127.0.0.11' is impersonating 'sensor_node' but feature
   ... has drifted"*
 
+### Add your phone to the software demo
+
+Start the normal simulator plus a UDP listener:
+
+```bash
+python scripts/run_demo.py --phone
+```
+
+Connect the phone and laptop to the same Wi-Fi network. In a UDP sender app on
+the phone, send repeated packets to the laptop's Wi-Fi IPv4 address (from
+`ipconfig`) on port `9999`. The simulator's three devices remain visible and
+the phone appears as one additional device after about 10–15 seconds. It is
+expected to be labelled **Unknown/Rogue** unless its packet size and timing
+match one of the trained profiles. On Windows, allow inbound UDP port 9999 in
+the firewall as described in the troubleshooting section.
+
 ## With real ESP8266 hardware
 
 The ESP8266 boards are **traffic generators** (test instruments), not part of
